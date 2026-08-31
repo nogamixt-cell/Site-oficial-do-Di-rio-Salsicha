@@ -4,172 +4,943 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🌭 Diário Salsicha</title>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0d0d0d;color:#fff;font-family:Arial,sans-serif}
-.wrap{max-width:820px;margin:auto;padding:20px}.card{background:#181818;border:1px solid #303030;border-radius:20px;padding:22px;margin:15px 0}
-h1{margin:0;font-size:38px}.muted{color:#999}.accent{color:#ffb51b}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#101010;padding:15px;border-radius:14px}.num{font-size:27px;font-weight:900}
-input,button{width:100%;padding:14px;border-radius:11px;margin-top:9px;font-size:16px}input{background:#0d0d0d;color:#fff;border:1px solid #444}button{border:0;background:#ffb51b;color:#111;font-weight:900;cursor:pointer}button.dark{background:#292929;color:#fff}button.red{background:#c93434;color:#fff}
-.warn{background:#2b210c;border:1px solid #765700;padding:13px;border-radius:12px}.ok{background:#102515;border:1px solid #2b6437;padding:13px;border-radius:12px}
-.hidden{display:none}.row{border-top:1px solid #333;padding:14px 0}.pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#3a3a3a;font-size:12px;margin-top:5px}.green{background:#19542a}.yellow{background:#624900}
-.tabs{display:flex;gap:8px}.tabs button{margin:0}.search{margin-bottom:10px}
-@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}.grid .stat:last-child{grid-column:span 2}}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0d0d;color:#fff;font-family:Arial,sans-serif}
+.wrap{max-width:820px;margin:auto;padding:20px}
+.card{background:#181818;border:1px solid #303030;border-radius:20px;padding:22px;margin:15px 0}
+h1{margin:0;font-size:38px}
+.muted{color:#999}
+.accent{color:#ffb51b}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#101010;padding:15px;border-radius:14px}
+.num{font-size:27px;font-weight:900}
+
+input,button{
+width:100%;
+padding:14px;
+border-radius:11px;
+margin-top:9px;
+font-size:16px
+}
+
+input{
+background:#0d0d0d;
+color:#fff;
+border:1px solid #444
+}
+
+button{
+border:0;
+background:#ffb51b;
+color:#111;
+font-weight:900;
+cursor:pointer
+}
+
+button.dark{
+background:#292929;
+color:#fff
+}
+
+button.red{
+background:#c93434;
+color:#fff
+}
+
+.warn{
+background:#2b210c;
+border:1px solid #765700;
+padding:13px;
+border-radius:12px
+}
+
+.ok{
+background:#102515;
+border:1px solid #2b6437;
+padding:13px;
+border-radius:12px
+}
+
+.hidden{display:none}
+
+.row{
+border-top:1px solid #333;
+padding:14px 0
+}
+
+.pill{
+display:inline-block;
+padding:5px 9px;
+border-radius:20px;
+background:#3a3a3a;
+font-size:12px;
+margin-top:5px
+}
+
+.green{background:#19542a}
+.yellow{background:#624900}
+
+.tabs{
+display:flex;
+gap:8px
+}
+
+.tabs button{
+margin:0
+}
+
+.search{
+margin-bottom:10px
+}
+
+@media(max-width:600px){
+.grid{
+grid-template-columns:1fr 1fr
+}
+.grid .stat:last-child{
+grid-column:span 2
+}
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
 
 <section class="card">
+
 <h1>🌭 DIÁRIO SALSICHA</h1>
-<p class="muted">Reserva oficial • Battle Royale Solo</p>
+
+<p class="muted">
+Reserva oficial • Battle Royale Solo
+</p>
+
 <div class="grid">
-<div class="stat"><span class="muted">Vagas</span><div class="num accent" id="vagas">48</div></div>
-<div class="stat"><span class="muted">Inscritos</span><div class="num" id="inscritos">0</div></div>
-<div class="stat"><span class="muted">Liberados</span><div class="num" id="liberados">0</div></div>
+
+<div class="stat">
+<span class="muted">Vagas</span>
+<div class="num accent" id="vagas">48</div>
 </div>
+
+<div class="stat">
+<span class="muted">Inscritos</span>
+<div class="num" id="inscritos">0</div>
+</div>
+
+<div class="stat">
+<span class="muted">Liberados</span>
+<div class="num" id="liberados">0</div>
+</div>
+
+</div>
+
 </section>
+
 
 <section class="card" id="reserveCard">
+
 <h2>🎮 Reservar vaga</h2>
-<input id="nick" placeholder="Nickname do Free Fire">
-<input id="playerId" placeholder="ID do Free Fire" inputmode="numeric">
-<button onclick="reservar()">RESERVAR VAGA</button>
-<p class="muted">Sua reserva será criada como pendente até a conferência do ADM.</p>
+
+<input
+id="nick"
+placeholder="Nickname do Free Fire">
+
+<input
+id="playerId"
+placeholder="ID do Free Fire"
+inputmode="numeric">
+
+<button onclick="reservar()">
+RESERVAR VAGA
+</button>
+
+<p class="muted">
+Sua reserva será criada como pendente até a conferência do ADM.
+</p>
+
 </section>
+
 
 <section class="card hidden" id="paymentCard">
+
 <h2>💸 Pagamento</h2>
-<div class="warn"><b>⚠️ ATENÇÃO</b><br>Confira a chave Pix antes de pagar. Nunca aceite uma chave enviada por desconhecidos.</div>
-<p>Valor: <b>R$ 5,50</b></p>
-<p>Chave Pix: <b id="pix">47992054523</b></p>
-<button class="dark" onclick="copiarPix()">📋 COPIAR PIX</button>
-<p>Seu código de reserva:</p>
-<h2 class="accent" id="reservationCode"></h2>
-<div class="ok">📸 Após o pagamento, envie o comprovante para um ADM oficial pelo WhatsApp.</div>
-<button onclick="abrirWhats()">📲 ENVIAR COMPROVANTE</button>
-</section>
 
-<section class="card">
-<h2>🔐 Segurança</h2>
-<p>Negocie somente com os ADM oficiais.</p>
-<p>📞 Giliardi: <b>+55 47 99205-4523</b><br>📞 Rafael: <b>+55 47 99623-7926</b></p>
-</section>
+<div class="warn">
 
-<section class="card">
-<h2>👑 Painel ADM</h2>
-<div id="login">
-<p class="muted">Área restrita. Digite o código de acesso do ADM.</p>
-<input id="adminCode" type="password" placeholder="Código do ADM">
-<button onclick="loginAdmin()">🔐 ACESSAR PAINEL</button>
-<p id="loginMsg" class="muted"></p>
+<b>⚠️ ATENÇÃO</b><br>
+
+Confira a chave Pix antes de pagar.
+Nunca aceite uma chave enviada por desconhecidos.
+
 </div>
+
+<p>
+Valor: <b>R$ 5,50</b>
+</p>
+
+<p>
+Chave Pix: <b id="pix">47992054523</b>
+</p>
+
+<button class="dark" onclick="copiarPix()">
+📋 COPIAR PIX
+</button>
+
+<p>
+Seu código de reserva:
+</p>
+
+<h2 class="accent" id="reservationCode"></h2>
+
+<div class="ok">
+
+📸 Após o pagamento, envie o comprovante para um ADM oficial pelo WhatsApp.
+
+</div>
+
+<button onclick="abrirWhats()">
+📲 ENVIAR COMPROVANTE
+</button>
+
+</section>
+
+
+<section class="card">
+
+<h2>🔐 Segurança</h2>
+
+<p>
+Negocie somente com os ADM oficiais.
+</p>
+
+<p>
+📞 Giliardi:
+<b>+55 47 99205-4523</b>
+<br>
+
+📞 Rafael:
+<b>+55 47 99623-7926</b>
+</p>
+
+</section>
+
+
+<section class="card">
+
+<h2>👑 Painel ADM</h2>
+
+<div id="login">
+
+<p class="muted">
+Área restrita. Digite o código de acesso do ADM.
+</p>
+
+<input
+id="adminCode"
+type="password"
+placeholder="Código do ADM">
+
+<button onclick="loginAdmin()">
+🔐 ACESSAR PAINEL
+</button>
+
+<p id="loginMsg" class="muted"></p>
+
+</div>
+
 
 <div id="panel" class="hidden">
+
 <div class="tabs">
-<button onclick="mostrarTodos()">📋 Inscrições</button>
-<button onclick="mostrarPendentes()">💰 Pendentes</button>
+
+<button onclick="mostrarTodos()">
+📋 Inscrições
+</button>
+
+<button onclick="mostrarPendentes()">
+💰 Pendentes
+</button>
+
 </div>
-<input class="search" id="search" placeholder="Buscar pelo ID do jogador" oninput="renderAdmin()">
+
+<input
+class="search"
+id="search"
+placeholder="Buscar pelo ID do jogador"
+oninput="renderAdmin()">
+
 <div id="adminList"></div>
-<button class="red" onclick="logout()">Sair do painel</button>
+
+<button class="red" onclick="logout()">
+Sair do painel
+</button>
+
 </div>
+
 </section>
 
 </div>
 
+
 <script>
-/*
-  PROTÓTIPO:
-  - Troque ADMIN_CODE pelo código desejado para testes.
-  - Em produção, NÃO deixe o código no JavaScript. Use autenticação no servidor.
-*/
-const ADMIN_CODE="Rafaelgayzao";
-const PIX_KEY="47992054523";
-const MAX_SLOTS=48;
-const ADM_WHATSAPP="5547992054523";
 
-let entries=JSON.parse(localStorage.getItem("ds_v2_entries")||"[]");
-let filterMode="all";
-let currentReservation=null;
-document.getElementById("pix").textContent=PIX_KEY;
+/* =========================================
+   CONEXÃO COM SUPABASE
+========================================= */
 
-function save(){localStorage.setItem("ds_v2_entries",JSON.stringify(entries));renderStats()}
+const SUPABASE_URL =
+"https://psuroifsbzhfhdlvrhqt.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_LHJcCqd6kieQFrFmwMdldw_ungTZp1d";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =========================================
+   CONFIGURAÇÕES
+========================================= */
+
+const ADMIN_CODE = "Rafaelgayzao";
+
+const PIX_KEY = "47992054523";
+
+const MAX_SLOTS = 48;
+
+const ADM_WHATSAPP = "5547992054523";
+
+
+let entries = [];
+
+let filterMode = "all";
+
+let currentReservation = null;
+
+let loading = false;
+
+
+document.getElementById("pix").textContent = PIX_KEY;
+
+
+/* =========================================
+   CARREGAR INSCRIÇÕES DO BANCO
+========================================= */
+
+async function carregarInscricoes(){
+
+const {data,error} =
+
+await supabaseClient
+.from("inscricoes")
+.select("*")
+.order("id",{ascending:false});
+
+
+if(error){
+
+console.error(error);
+
+alert("Erro ao carregar inscrições.");
+
+return;
+
+}
+
+
+entries = data.map(x => ({
+
+nick:x.nickname,
+
+id:x.player_id,
+
+code:x.codigo,
+
+time:x.criado_em
+? new Date(x.criado_em)
+.toLocaleString("pt-BR")
+: "",
+
+status:
+x.status_pagamento === "confirmado"
+? "Confirmado"
+: "Pendente",
+
+liberado:x.liberado
+
+}));
+
+
+renderStats();
+
+renderAdmin();
+
+}
+
+
+/* =========================================
+   GERAR CÓDIGO
+========================================= */
 
 function makeCode(){
- return "DS-"+Math.floor(10000+Math.random()*90000);
+
+return "DS-" +
+Math.floor(
+10000 + Math.random() * 90000
+);
+
 }
 
-function reservar(){
- const nick=document.getElementById("nick").value.trim();
- const id=document.getElementById("playerId").value.trim();
- if(!nick||!id)return alert("Preencha Nickname e ID.");
- if(entries.length>=MAX_SLOTS)return alert("As vagas estão esgotadas.");
- if(entries.some(x=>x.id===id))return alert("Este ID já possui uma inscrição.");
 
- currentReservation={nick,id};
- const item={nick,id,code:makeCode(),time:new Date().toLocaleString("pt-BR"),
- status:"Pendente",liberado:false};
- entries.push(item);save();
- document.getElementById("reservationCode").textContent=item.code;
- document.getElementById("reserveCard").classList.add("hidden");
- document.getElementById("paymentCard").classList.remove("hidden");
+/* =========================================
+   RESERVAR VAGA
+========================================= */
+
+async function reservar(){
+
+if(loading)return;
+
+const nick =
+document.getElementById("nick")
+.value.trim();
+
+const id =
+document.getElementById("playerId")
+.value.trim();
+
+
+if(!nick || !id){
+
+alert("Preencha Nickname e ID.");
+
+return;
+
 }
+
+
+if(entries.length >= MAX_SLOTS){
+
+alert("As vagas estão esgotadas.");
+
+return;
+
+}
+
+
+if(entries.some(x => x.id === id)){
+
+alert("Este ID já possui uma inscrição.");
+
+return;
+
+}
+
+
+loading = true;
+
+
+const code = makeCode();
+
+
+const {data,error} =
+
+await supabaseClient
+.from("inscricoes")
+.insert({
+
+nickname:nick,
+
+player_id:id,
+
+codigo:code,
+
+status_pagamento:"pendente",
+
+liberado:false
+
+})
+.select()
+.single();
+
+
+loading = false;
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Não foi possível criar sua reserva."
+);
+
+return;
+
+}
+
+
+currentReservation = {
+
+nick:nick,
+
+id:id
+
+};
+
+
+document.getElementById(
+"reservationCode"
+).textContent = code;
+
+
+document.getElementById(
+"reserveCard"
+).classList.add("hidden");
+
+
+document.getElementById(
+"paymentCard"
+).classList.remove("hidden");
+
+
+await carregarInscricoes();
+
+}
+
+
+/* =========================================
+   LOGIN ADM
+========================================= */
 
 function loginAdmin(){
- const code=document.getElementById("adminCode").value;
- if(code!==ADMIN_CODE){
-   document.getElementById("loginMsg").textContent="❌ Código inválido.";
-   return;
- }
- document.getElementById("login").classList.add("hidden");
- document.getElementById("panel").classList.remove("hidden");
- renderAdmin();
+
+const code =
+document.getElementById(
+"adminCode"
+).value;
+
+
+if(code !== ADMIN_CODE){
+
+document.getElementById(
+"loginMsg"
+).textContent =
+"❌ Código inválido.";
+
+return;
+
 }
+
+
+document.getElementById(
+"login"
+).classList.add("hidden");
+
+
+document.getElementById(
+"panel"
+).classList.remove("hidden");
+
+
+renderAdmin();
+
+}
+
+
+/* =========================================
+   ESTATÍSTICAS
+========================================= */
 
 function renderStats(){
- document.getElementById("vagas").textContent=Math.max(0,MAX_SLOTS-entries.length);
- document.getElementById("inscritos").textContent=entries.length;
- document.getElementById("liberados").textContent=entries.filter(x=>x.liberado).length;
+
+document.getElementById("vagas")
+.textContent =
+Math.max(
+0,
+MAX_SLOTS - entries.length
+);
+
+
+document.getElementById("inscritos")
+.textContent =
+entries.length;
+
+
+document.getElementById("liberados")
+.textContent =
+entries.filter(
+x => x.liberado
+).length;
+
 }
-function mostrarTodos(){filterMode="all";renderAdmin()}
-function mostrarPendentes(){filterMode="pending";renderAdmin()}
+
+
+/* =========================================
+   FILTROS
+========================================= */
+
+function mostrarTodos(){
+
+filterMode = "all";
+
+renderAdmin();
+
+}
+
+
+function mostrarPendentes(){
+
+filterMode = "pending";
+
+renderAdmin();
+
+}
+
+
+/* =========================================
+   PAINEL ADM
+========================================= */
 
 function renderAdmin(){
- const q=(document.getElementById("search")?.value||"").trim();
- let list=entries.filter(x=>(filterMode==="all"||x.status==="Pendente")&&(!q||x.id.includes(q)));
- document.getElementById("adminList").innerHTML=list.length?list.map(x=>{
-   const i=entries.indexOf(x);
-   return `<div class="row">
-   <b>${esc(x.nick)}</b><br>
-   <span class="muted">ID: ${esc(x.id)} • Código: ${esc(x.code)} • ${esc(x.time)}</span><br>
-   <span class="pill ${x.status==="Confirmado"?"green":"yellow"}">${x.status}</span>
-   <span class="pill ${x.liberado?"green":""}">${x.liberado?"🟢 LIBERADO":"🔒 BLOQUEADO"}</span>
-   <button onclick="confirmar(${i})">💰 ${x.status==="Confirmado"?"Pagamento confirmado":"Confirmar pagamento"}</button>
-   <button class="${x.liberado?"red":"dark"}" onclick="liberarPorId(${i})">${x.liberado?"🔒 Revogar acesso":"🔓 Liberar jogador"}</button>
-   </div>`
- }).join(""):"<p class='muted'>Nenhuma inscrição encontrada.</p>";
+
+const q =
+(
+document.getElementById("search")
+?.value || ""
+)
+.trim();
+
+
+const list =
+entries.filter(x =>
+
+(
+filterMode === "all" ||
+x.status === "Pendente"
+)
+
+&&
+
+(
+!q ||
+x.id.includes(q)
+)
+
+);
+
+
+document.getElementById(
+"adminList"
+).innerHTML =
+
+list.length
+
+?
+
+list.map(x => {
+
+const i =
+entries.indexOf(x);
+
+
+return `
+
+<div class="row">
+
+<b>
+${esc(x.nick)}
+</b>
+
+<br>
+
+<span class="muted">
+
+ID:
+${esc(x.id)}
+
+•
+
+Código:
+${esc(x.code)}
+
+•
+
+${esc(x.time)}
+
+</span>
+
+<br>
+
+<span class="pill ${
+x.status === "Confirmado"
+? "green"
+: "yellow"
+}">
+
+${x.status}
+
+</span>
+
+<span class="pill ${
+x.liberado
+? "green"
+: ""
+}">
+
+${
+x.liberado
+? "🟢 LIBERADO"
+: "🔒 BLOQUEADO"
 }
 
-function confirmar(i){
- entries[i].status="Confirmado";save();renderAdmin();
+</span>
+
+
+<button
+onclick="confirmar(${i})">
+
+💰 ${
+x.status === "Confirmado"
+? "Pagamento confirmado"
+: "Confirmar pagamento"
 }
-function liberarPorId(i){
- if(entries[i].status!=="Confirmado")return alert("Confirme o pagamento antes de liberar o jogador.");
- entries[i].liberado=!entries[i].liberado;save();renderAdmin();
+
+</button>
+
+
+<button
+class="${x.liberado ? "red" : "dark"}"
+onclick="liberarPorId(${i})">
+
+${
+x.liberado
+? "🔒 Revogar acesso"
+: "🔓 Liberar jogador"
 }
+
+</button>
+
+</div>
+
+`;
+
+}).join("")
+
+:
+
+"<p class='muted'>Nenhuma inscrição encontrada.</p>";
+
+}
+
+
+/* =========================================
+   CONFIRMAR PAGAMENTO
+========================================= */
+
+async function confirmar(i){
+
+const jogador =
+entries[i];
+
+
+const {error} =
+
+await supabaseClient
+.from("inscricoes")
+.update({
+
+status_pagamento:
+"confirmado"
+
+})
+.eq(
+"player_id",
+jogador.id
+);
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Erro ao confirmar pagamento."
+);
+
+return;
+
+}
+
+
+await carregarInscricoes();
+
+}
+
+
+/* =========================================
+   LIBERAR JOGADOR
+========================================= */
+
+async function liberarPorId(i){
+
+const jogador =
+entries[i];
+
+
+if(
+jogador.status !== "Confirmado"
+){
+
+alert(
+"Confirme o pagamento antes de liberar o jogador."
+);
+
+return;
+
+}
+
+
+const novoStatus =
+!jogador.liberado;
+
+
+const {error} =
+
+await supabaseClient
+.from("inscricoes")
+.update({
+
+liberado:novoStatus
+
+})
+.eq(
+"player_id",
+jogador.id
+);
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"Erro ao alterar liberação."
+);
+
+return;
+
+}
+
+
+await carregarInscricoes();
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
 function logout(){
- document.getElementById("panel").classList.add("hidden");
- document.getElementById("login").classList.remove("hidden");
- document.getElementById("adminCode").value="";
+
+document.getElementById(
+"panel"
+).classList.add("hidden");
+
+
+document.getElementById(
+"login"
+).classList.remove("hidden");
+
+
+document.getElementById(
+"adminCode"
+).value = "";
+
+
 }
-function copiarPix(){navigator.clipboard?.writeText(PIX_KEY);alert("Chave Pix copiada.")}
+
+
+/* =========================================
+   COPIAR PIX
+========================================= */
+
+function copiarPix(){
+
+navigator.clipboard
+?.writeText(PIX_KEY);
+
+alert(
+"Chave Pix copiada."
+);
+
+}
+
+
+/* =========================================
+   WHATSAPP
+========================================= */
+
 function abrirWhats(){
- if(!currentReservation)return;
- const msg=encodeURIComponent(`Olá ADM! Sou ${currentReservation.nick} (ID ${currentReservation.id}). Estou enviando o comprovante da inscrição do Diário Salsicha.`);
- location.href=`https://wa.me/${ADM_WHATSAPP}?text=${msg}`;
+
+if(!currentReservation)
+return;
+
+
+const msg =
+encodeURIComponent(
+
+`Olá ADM! Sou ${currentReservation.nick} (ID ${currentReservation.id}). Estou enviando o comprovante da inscrição do Diário Salsicha.`
+
+);
+
+
+location.href =
+`https://wa.me/${ADM_WHATSAPP}?text=${msg}`;
+
 }
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-renderStats();
+
+
+/* =========================================
+   ESCAPAR HTML
+========================================= */
+
+function esc(s){
+
+return String(s).replace(
+/[&<>"']/g,
+
+c => ({
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+
+}[c])
+
+);
+
+}
+
+
+/* =========================================
+   INICIAR
+========================================= */
+
+carregarInscricoes();
+
 </script>
+
 </body>
 </html>
